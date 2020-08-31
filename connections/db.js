@@ -1,6 +1,9 @@
+if(process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+}
 const mongoose = require('mongoose');
 
-const URL = "mongodb+srv://quizApp:quiz1234@quiz-cluster.bszi5.mongodb.net/<quiz-app>?retryWrites=true&w=majority";
+const URL = process.env.DATABASE_URL
 
 const connection = async()=>{
     try {
