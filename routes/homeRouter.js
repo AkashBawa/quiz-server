@@ -4,6 +4,12 @@ const bcrypt = require('bcrypt');
 
 
 var users = [];
+// check server //
+
+router.get('/', async(req, res)=>{
+  console.log("reached");
+  res.send("hello world")
+})
 
 //----------  URL : /api/home/login ------------//
 router.post('/login', async(req, res)=>{
