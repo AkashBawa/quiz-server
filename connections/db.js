@@ -7,8 +7,10 @@ const URL = process.env.DATABASE_URL
 
 const connection = async()=>{
     try {
-        await mongoose.connect(URL,{ useNewUrlParser : true, useUnifiedTopology : true});
-        console.log("database connected")
+        mongoose.connect(URL,{ useNewUrlParser : true, useUnifiedTopology : true});
+        const db = mongoose.connection;
+        db.on('error', error => console.log(error))
+        db.once('open', () => console.log("connected to mongoose"))
     }catch(err){
         console.log("Error occur while connectiong to database" , err)
     }
