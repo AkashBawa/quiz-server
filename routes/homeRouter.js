@@ -87,6 +87,7 @@ router.post('/signup' ,async (req, res)=>{
       let hash = await  Users.createHash(user)
       if(hash == null ){
         res.json({success : false, msg : "Something went wrong"})
+        return;
       }
       user.password = hash;
       let newUser = await user.save();
