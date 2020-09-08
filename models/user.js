@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt');
 
 var uniqueValidator = require('mongoose-unique-validator');
 const { use } = require('../routes/homeRouter');
+const { strict } = require('assert');
 
 const user = new mongoose.Schema({
 
@@ -17,7 +18,8 @@ const user = new mongoose.Schema({
     otherToken : {type : String},
     ownToken : {type : String},
     profilePic : {type : String},
-    provider : {type : String, required : true}
+    provider : {type : String, required : true},
+    gender : {type : String, required : true}
     
 })
 

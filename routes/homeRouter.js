@@ -69,6 +69,7 @@ router.post('/signup' ,async (req, res)=>{
     req.checkBody('email', "email is requires").isEmail();
     req.checkBody('password', "password is requires").notEmpty();
     req.checkBody('provider', "provider is requires").notEmpty();
+    req.checkBody('gender', "Gender is requires").notEmpty();
 
     let err = req.validationErrors();
 
@@ -87,7 +88,6 @@ router.post('/signup' ,async (req, res)=>{
       if(hash == null ){
         res.json({success : false, msg : "Something went wrong"})
       }
-      console.log(hash)
       user.password = hash;
       let newUser = await user.save();
       return res.json({success : true, newUser})
