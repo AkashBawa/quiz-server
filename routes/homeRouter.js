@@ -29,10 +29,7 @@ router.post('/login', async (req, res)=>{
   if(err){
     res.status(200).json({success : false, err})
   }
-  // query = query.regex('name', new RegExp(name, 'i'));
-  // query = query.lte('properyName', "properyValue")
-  // const user = await query.exec();
-
+  
   try {
 
     var user = await Users.findOne({email : req.body.username});
@@ -75,6 +72,20 @@ router.post('/signup' ,async (req, res)=>{
 
   if(err){
     res.status(200).json({success : false, msg : err});
+    return;
+  }
+
+  let user = await Users.find({"email": req.body.email});
+  
+  if(user){
+    res.json({success : false, msg : "Email already exists"})
+    return;
+  }
+
+  let user = await Users.find({'mobileNo' : req.body.mobileNo});
+
+  if(user){
+    res.json({success : false, msg : "Mobile number already exists"})
     return;
   }
 
@@ -152,6 +163,27 @@ router.get('/resendEmailVerification/:email',async(req, res)=>{
     return res.json({success : false, message : 'Something went wrong'})
   }
     
+})
+
+//-----URL : /api/home/detailFromToken
+router.get('/detailFromToken/:token', async (req, res)=>{
+  
+  let token = req.params.token
+  try {
+
+    const toVerify = await tokenController.verifyToken(token);
+
+    if(toVerify) {
+      res.status(200).json({data : toVerify, success : true})
+      return;
+    } else {
+      res.status(200).json({success : false});
+      return;
+    }
+
+  } catch(err){
+    res.send("Something went wrong")
+  }
 })
 
 module.exports = router
