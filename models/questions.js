@@ -27,7 +27,7 @@ const quiz = new mongoose.Schema(
                 question : {type : String, required : true},
                 correctIndex: {type : Number, required : true},      // index
                 correctAns: {type : String, required : true},       // value
-                options : [String],
+                options : [ {type : String, require : true}],
                 type : {type : String , required : true}            // mcq or others
             }
         ]   
