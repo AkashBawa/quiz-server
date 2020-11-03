@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 
+
 const quiz = new mongoose.Schema(
     {
         createdBy : {
@@ -17,16 +18,16 @@ const quiz = new mongoose.Schema(
         },
 
         time : {
-            type : time,
+            type : Date,
             required : true
         },
 
-        questions : [
+        questionArray : [
             {
                 question : {type : String, required : true},
-                rightAnswer: {type : Number, required : true},      // index
-                rightValue: {type : String, required : true},       // value
-                options : [{values : String}],
+                correctIndex: {type : Number, required : true},      // index
+                correctAns: {type : String, required : true},       // value
+                options : [String],
                 type : {type : String , required : true}            // mcq or others
             }
         ]   

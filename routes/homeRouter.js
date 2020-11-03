@@ -75,21 +75,23 @@ router.post('/signup' ,async (req, res)=>{
     return;
   }
 
-  let user = await Users.find({"email": req.body.email});
+  const user = await Users();
+
+  user = await Users.find({"email": req.body.email});
   
   if(user){
     res.json({success : false, msg : "Email already exists"})
     return;
   }
 
-  let user = await Users.find({'mobileNo' : req.body.mobileNo});
+  user = await Users.find({'mobileNo' : req.body.mobileNo});
 
   if(user){
     res.json({success : false, msg : "Mobile number already exists"})
     return;
   }
 
-  const user = new Users({
+  user = new Users({
     ...req.body
   })
 
