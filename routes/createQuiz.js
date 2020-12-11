@@ -112,9 +112,35 @@ router.get("/quizbycustomId/:quizId", async (req, res)=>{
     
 })
 
-
 router.get('/quizbydate', async (req, res)=>{
-    console.log("quiz by date");
+
+    try {
+        var today = new Date();
+    
+        let quiz = await Quiz.find({"date" : {$gte : today}});
+        return res.json({success : true, data : quiz})
+
+    } catch(e){
+        return res.json({success : false, message : e, msg : e})
+    }
+
+    
+})
+
+router.get('/quizbySingledate/:date', async (req, res)=>{
+    var date = req.params.date;
+    if(!date){
+        return res.json({success : false, message : "provide date"})
+    }
+    try {
+        var today = new Date();
+    
+        let quiz = await Quiz.find(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           );
+        return res.json({success : true, data : quiz})
+
+    } catch(e){
+        return res.json({success : false, message : e, msg : e})
+    }
 })
 
 module.exports = router
