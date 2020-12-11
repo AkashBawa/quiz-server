@@ -12,27 +12,28 @@ const Quiz = require('../models/questions');
 // URL : /api/admin/createquiz
 router.post('/createquiz',async (req, res)=>{
 
-    console.log("body is : ", req.body);
-    req.checkBody('name', 'name is required').notEmpty();
-    req.checkBody('date', 'date is required').notEmpty();
-    req.checkBody('time', 'time is required').notEmpty();
-    req.checkBody('questionArray', 'Questions are required').notEmpty();
-
-    let err = req.validationErrors();
-
-    if(err){
-        return res.json({success : false, message : 'Something went wrong', msg : err})
-    }
-    let time = req.body.time;
-
-    let hour = time.slice(0, 2);
-    let minutes = time.slice(3);
-
-    req.body.time = new Date(req.body.date);
-    req.body.time.setHours(hour, minutes)
-    
-    var testId = await nanoId();
     try{
+
+
+        req.checkBody('name', 'name is required').notEmpty();
+        req.checkBody('date', 'date is required').notEmpty();
+        req.checkBody('time', 'time is required').notEmpty();
+        req.checkBody('questionArray', 'Questions are required').notEmpty();
+
+        let err = req.validationErrors();
+
+        if(err){
+            return res.json({success : false, message : 'Something went wrong', msg : err})
+        }
+        // let time = req.body.time;
+
+        // let hour = time.slice(0, 2);
+        // let minutes = time.slice(3);
+    
+        // console.log("hours : ", hour, minutes);
+        
+        
+        var testId = await nanoId();
 
         const quiz =  new Quiz({
             ...req.body,
@@ -42,7 +43,7 @@ router.post('/createquiz',async (req, res)=>{
         await quiz.save();
         return res.json({success : true, message : "Saved"})
         
-    } catch(e){
+    }catch(e){
         return res.json({success : false, message : e});
     }
 })
@@ -118,13 +119,11 @@ router.get('/quizbydate', async (req, res)=>{
         var today = new Date();
     
         let quiz = await Quiz.find({"date" : {$gte : today}});
-        return res.json({success : true, data : quiz})
+        return res.json({success : true, data : quiz});
 
     } catch(e){
-        return res.json({success : false, message : e, msg : e})
+        return res.json({success : false, message : e, msg : e});
     }
-
-    
 })
 
 router.get('/quizbySingledate/:date', async (req, res)=>{

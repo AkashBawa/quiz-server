@@ -22,7 +22,7 @@ const quiz = new mongoose.Schema(
         },
 
         time : {
-            type : Date,
+            type : String,
             required : true
         },
 
