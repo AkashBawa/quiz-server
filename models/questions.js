@@ -4,7 +4,15 @@ const mongoose = require('mongoose');
 const quiz = new mongoose.Schema(
     {
         createdBy : {
-            type : mongoose.SchemaTypes.ObjectId
+            type : String
+        },
+        teacherId : {
+            type : Number,                  //used for URL : /test/teacherId/testId
+            required : true
+        },
+        testId : {
+            type :  Number,
+            required : true
         },
 
         name :{
@@ -13,20 +21,20 @@ const quiz = new mongoose.Schema(
         },
 
         date : {
-            type :Date,
+            type :String,
             required : true
         },
 
         time : {
-            type : Date,
+            type : String,
             required : true
         },
 
         questionArray : [
             {
                 question : {type : String, required : true},
-                correctIndex: {type : Number, required : true},      // index
-                correctAns: {type : String, required : true},       // value
+                correctIndex: {type : Number},      // index
+                correctAns: {type : String},       // value
                 options : [ {type : String, require : true}],
                 type : {type : String , required : true}            // mcq or others
             }
