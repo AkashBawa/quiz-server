@@ -1,3 +1,11 @@
+// import {nanoid} from 'nanoid'
+// var { nanoid } = require("nanoid");
+// // var ID = nanoid(10 );
+// console.log("nano id : ", ID);
+
+var { customAlphabet } = require('nanoid/async')
+const nanoId = customAlphabet('1234567890', 10)
+
 const router = require('express')();
 const Quiz = require('../models/questions');
 
@@ -5,22 +13,37 @@ const Quiz = require('../models/questions');
 router.post('/createquiz',async (req, res)=>{
 
     console.log("body is : ", req.body);
-
     req.checkBody('name', 'name is required').notEmpty();
     req.checkBody('date', 'date is required').notEmpty();
     req.checkBody('time', 'time is required').notEmpty();
     req.checkBody('questionArray', 'Questions are required').notEmpty();
 
+    let err = req.validationErrors();
+
+    if(err){
+        return res.json({success : false, message : 'Something went wrong', msg : err})
+    }
+    let time = req.body.time;
+
+    let hour = time.slice(0, 2);
+    let minutes = time.slice(3);
+
+    req.body.time = new Date(req.body.date);
+    req.body.time.setHours(hour, minutes)
+    
+    var testId = await nanoId();
     try{
 
         const quiz =  new Quiz({
-            ...req.body
+            ...req.body,
+            quizId : testId
         });
     
         await quiz.save();
-
+        return res.json({success : true, message : "Saved"})
+        
     } catch(e){
-        console.log("error is", e);
+        return res.json({success : false, message : e});
     }
 })
 
