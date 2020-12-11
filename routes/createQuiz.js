@@ -49,7 +49,6 @@ router.post('/createquiz',async (req, res)=>{
 
 router.get("/allquiz",async(req, res)=>{
 
-
     try{
         const quiz = await Quiz.find({});
 
@@ -62,15 +61,18 @@ router.get("/allquiz",async(req, res)=>{
     }
 })
 
-router.get("/quizbyid", async (req, res)=>{
+router.get("/quizbyid/:quizId", async (req, res)=>{
 
-    if(!req.body.quizId){
+    
+    if(!req.params.quizId){
         return res.json({success : false, e : "provide quiz id"})
     }
 
+    var id = req.params.quizId
+
     try{
 
-        const quiz = await new Quiz.findById(req.body.quizId);
+        const quiz = await Quiz.findById(id);
 
         if(!quiz){
             return res.json({success : true, message : "No quiz found", data : []})
@@ -85,6 +87,31 @@ router.get("/quizbyid", async (req, res)=>{
     }
     
 })
+
+router.get("/quizbycustomId/:quizId", async (req, res)=>{
+
+    if(!req.params.quizId){
+        return res.json({success : false, e : "provide quiz id"})
+    }
+
+    try{
+
+        const quiz = await Quiz.find({"quizId" : req.params.quizId });
+
+        if(!quiz){
+            return res.json({success : true, message : "No quiz found", data : []})
+        } else {
+            return res.json({success : true,  data : quiz})
+        }
+
+    } catch(e){
+
+        console.log("err is : ", e);
+        return res.json({success : false, e : e})
+    }
+    
+})
+
 
 router.get('/quizbydate', async (req, res)=>{
     console.log("quiz by date");
