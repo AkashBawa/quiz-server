@@ -9,6 +9,8 @@ const nanoId = customAlphabet('1234567890', 10)
 const router = require('express')();
 const Quiz = require('../models/questions');
 
+const Result = require('../models/answerSheet');
+
 // URL : /api/admin/createquiz
 router.post('/createquiz',async (req, res)=>{
 
@@ -142,4 +144,38 @@ router.get('/quizbySingledate/:date', async (req, res)=>{
     }
 })
 
+router.post('/savequiz/:userid', async(req, res)=>{
+    let userid = req.params.userid;
+    console.log(req.body)
+    if(!userid){
+        return res.json({success : false, message : "Provide user id"});
+    }
+    if(!req.body.quizId){
+        return res.json({success : false, message : "Provide quizId"});
+    }
+    if(!req.body.questionAttempted){
+        return res.json({success : false, message : "Provide questionAttempted"});
+    }
+    if(!req.body.markedAns){
+        return res.json({success : false, message : "Provide markedAns"});
+    }
+    if(!req.body.markesObtained){
+        return res.json({success : false, message : "Provide markesObtained"});
+    }
+
+    try {
+        const result = new Result({
+            ...req.body,
+            userId : userid
+        });
+        
+        await result.save();
+        return res.json({success : true, message : "Result saved"})
+
+    } catch(e){
+        return res.json({success : false, message : "Something went wrong", err : e})
+    }
+    
+    
+})
 module.exports = router

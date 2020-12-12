@@ -17,10 +17,10 @@ const nanoId = customAlphabet('1234567890', 6)
 const imgType = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif']
 
 const currentURL = 'http://localhost:3000'
-router.get('/', async(req, res)=>{
-  console.log("reached");
-  res.send("hello world")
-})
+// router.get('/', async(req, res)=>{
+//   console.log("reached");
+//   res.send("hello world")
+// })
 
 //----------  URL : /api/home/login ------------//
 router.post('/login', async (req, res)=>{
