@@ -14,6 +14,10 @@ const quiz = new mongoose.Schema(
             type :  Number,
             required : true
         },
+        createdByName : {
+            type : String
+        },
+        quizId :{type : String, required : true},
 
         name :{
             type : String,
@@ -38,7 +42,7 @@ const quiz = new mongoose.Schema(
                 options : [ {type : String, require : true}],
                 type : {type : String , required : true}            // mcq or others
             }
-        ]   
+        ],   
     },
     {timestamps : true}
 )

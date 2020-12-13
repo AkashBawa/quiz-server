@@ -10,14 +10,18 @@ const fs = require('fs')
 const tokenController = require('../controller/jwtTokens')
 const mailerController = require('../controller/mailController');
 const user = require('../models/user');
+
+var { customAlphabet } = require('nanoid/async')
+const nanoId = customAlphabet('1234567890', 6)
+
 //---------multer integration----------//
 const imgType = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif']
 
 const currentURL = 'http://localhost:3000'
-router.get('/', async(req, res)=>{
-  console.log("reached");
-  res.send("hello world")
-})
+// router.get('/', async(req, res)=>{
+//   console.log("reached");
+//   res.send("hello world")
+// })
 
 //----------  URL : /api/home/login ------------//
 router.post('/login', async (req, res)=>{
@@ -91,9 +95,10 @@ router.post('/signup' ,async (req, res)=>{
     res.json({success : false, message : "Mobile number already exists"})
     return;
   }
-
+  var userid = await nanoId();
   user = new Users({
-    ...req.body
+    ...req.body,
+    userId : userid
   })
 
   try {
