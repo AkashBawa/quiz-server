@@ -8,7 +8,6 @@ const fs = require('fs')
 
 const tokenController = require('../controller/jwtTokens')
 const mailerController = require('../controller/mailController');
-const user = require('../models/user');
 
 var { customAlphabet } = require('nanoid/async')
 const nanoId = customAlphabet('1234567890', 6)
@@ -37,7 +36,9 @@ router.post('/login', async (req, res)=>{
   try {
 
     var user = await Users.findOne({email : req.body.username});
-
+    if(!user){
+      return res.json({success : false, message : "No user found"})
+    }
     
     let result = await Users.comparepassword(req.body.password, user.password)
 
@@ -45,16 +46,23 @@ router.post('/login', async (req, res)=>{
 
       if(!user.emailConfirm){
         return res.status(200).json({success : true, emailConfirm : false, 
-               message : 'Please verify your email by the link sent on your email.'})
+               message : 'Please verify your email by the link sent on your email and login again.'})
       } 
-      return res.status(200).json({success : true,emailConfirm : true, data : user})
-      
+
+      const userToken = await tokenController.generateToken(user.toJSON())
+
+      if(userToken == false){
+        return res.json({success : false, message : "something went wrong"})
+      }
+
+      return res.status(200).json({success : true,emailConfirm : true, userToken})      
+    
     } else {
       res.status(200).json({success : false, message: "Password not match"});
       return  
     }
   } catch(err){
-    res.status(200).json({success : false, msg : "Something went wrong"})
+    res.status(200).json({success : false, msg : "Something went wrong", err : err})
   }
   
 })
@@ -62,7 +70,6 @@ router.post('/login', async (req, res)=>{
 //----------  URL : /api/home/signup ------------//
 router.post('/signup' ,async (req, res)=>{
 
-  console.log("signup reach", req.body)
   req.checkBody('firstName', "FirstName is requires").notEmpty();
   req.checkBody('lastName', " LastName is requires").notEmpty();
   req.checkBody('dob', "DOB is requires").notEmpty();
@@ -79,28 +86,30 @@ router.post('/signup' ,async (req, res)=>{
     return;
   }
 
-  const user = await Users();
-
-  user = await Users.find({"email": req.body.email});
-  
-  if(user){
-    res.json({success : false, msg : "Email already exists"})
-    return;
-  }
-
-  user = await Users.find({'mobileNo' : req.body.mobileNo});
-
-  if(user){
-    res.json({success : false, msg : "Mobile number already exists"})
-    return;
-  }
-  var userid = await nanoId();
-  user = new Users({
-    ...req.body,
-    userId : userid
-  })
-
   try {
+
+    var user = await Users.find({"email": req.body.email});
+    console.log(user.length);
+
+    if(user.length != 0){
+      console.log("fetch user is : ", user)
+      res.json({success : false, msg : "Email already exists"})
+      return;
+    }
+
+    user = await Users.find({'mobileNo' : req.body.mobileNo});
+
+    if(user.length != 0){
+      res.json({success : false, msg : "Mobile number already exists"})
+      return;
+    }
+
+    var userid = await nanoId();
+
+    user = new Users({
+      ...req.body,
+      userId : userid
+    })
 
     let hash = await  Users.createHash(user)
 
