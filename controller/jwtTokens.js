@@ -5,11 +5,10 @@ module.exports.generateToken = async (data)=>{
     const tokenUrl = process.env.TOKEN_GENERATOR;
     try{
         const userToken = jwt.sign(data, tokenUrl)
-        console.log(userToken);
         return userToken;
     } catch(e){
         console.log(e);
-        return false
+        return false;
     }   
 }
 
