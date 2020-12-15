@@ -2,7 +2,7 @@ const router = require('express')();
 const Users = require('../models/user');
 
 //URL : /api/user/reqisterForQuiz   
-router.post('/reqisterForQuiz/:userId', async (req, res)=>{
+router.post('/registerForQuiz/:userId', async (req, res)=>{
     const userId = req.params.userId;
     
     if(!userId){
