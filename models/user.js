@@ -4,8 +4,6 @@ const profileImgPath = "uploads/profilepic"
 const bcrypt = require('bcrypt');
 
 var uniqueValidator = require('mongoose-unique-validator');
-const { use } = require('../routes/homeRouter');
-const { strict } = require('assert');
 
 const user = new mongoose.Schema({
 
