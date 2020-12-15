@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express();
 const bcrypt = require('bcrypt');
-const Users = require('../models/user')
+const Users = require('../models/user');
+const quizList = require('../models/questions');
 const multer = require('multer')
 const path = require('path');
 const fs = require('fs')
@@ -26,7 +27,7 @@ router.post('/login', async (req, res)=>{
   
   req.checkBody('username', 'username is required').notEmpty();
   req.checkBody('password', 'password is required').notEmpty();
- 
+  console.log(req.body)
   let err = req.validationErrors();
 
   if(err){
@@ -82,11 +83,10 @@ router.post('/signup' ,async (req, res)=>{
   let err = req.validationErrors();
 
   if(err){
-    res.status(200).json({success : false, msg : err});
+    res.status(200).json({success : false, message : err});
     return;
   }
-
-  try {
+try {
 
     var user = await Users.find({"email": req.body.email});
     console.log(user.length);
@@ -114,7 +114,8 @@ router.post('/signup' ,async (req, res)=>{
     let hash = await  Users.createHash(user)
 
     if(hash == null ){
-      res.json({success : false, msg : "Something went wrong"})
+      console.log("reached at 1");
+      res.json({success : false, message : "1"})
       return;
     }
 
@@ -126,6 +127,7 @@ router.post('/signup' ,async (req, res)=>{
       return res.json({success : true, newUser, message : 'Please login to avail our services'})
     } 
     var newUser = await user.save();
+    console.log("user saved!!!!!!!!!!!!");
     
     const userToken = await tokenController.generateToken({email : newUser.email})
 
@@ -137,7 +139,7 @@ router.post('/signup' ,async (req, res)=>{
     return res.json({success : true, newUser, message : 'Please verify your email by the link sent on your email.'})
     
   } catch(err){
-    return res.json({success : false, err : err, message : 'Something went wrong'})
+    return res.json({success : false, err : err, message : "the error is : "+err})
   }
 })
 
@@ -155,7 +157,7 @@ router.get('/verifyEmail/:token',async (req, res)=>{
     res.status(200).json({message : "Your email is verified now"});
 
   } catch(err){
-    res.send("Something went wrong")
+    res.send("Something went wrong3")
   }
 })
 
@@ -176,7 +178,7 @@ router.get('/resendEmailVerification/:email',async(req, res)=>{
 
   }catch(err){
     console.log(err)
-    return res.json({success : false, message : 'Something went wrong'})
+    return res.json({success : false, message : 'Something went wrong4'})
   }
     
 })
@@ -200,6 +202,34 @@ router.get('/detailFromToken/:token', async (req, res)=>{
   } catch(err){
     res.send("Something went wrong")
   }
+})
+
+router.post('/addQuiz',async (req,res)=>{
+  console.log("reached at addQuiz ",req.body);
+
+  /*last_testId =await quizList.find().sort({testId : -1}).limit(1);
+  console.log("last test id : ",last_testId);
+  new_testId = last_testId + 1;
+  console.log("new test id : ",new_testId);
+
+  new_quiz = quizList({
+    ...req.body
+  })
+
+  new_quiz.testId = new_testId;
+*/
+new_quiz = quizList({
+  'createdBy' : req.body.createdBy,
+  'teacherId' : req.body.teacherId,
+  'testId' : 1056,
+  'name' : req.body.name,
+  'date' : req.body.date,
+  'time' : req.body.time,
+  
+})
+  var saved_quiz = await new_quiz.save()
+  console.log("saved quiz is : ", saved_quiz);
+  return res.json({success : true, message : 'quiz saved'});
 })
 
 module.exports = router
