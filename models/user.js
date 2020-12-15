@@ -58,7 +58,11 @@ const user = new mongoose.Schema({
     role : { type : String, default : 'student'                     // student || admin || teacher
     },
 
-    gender : {type : String, required : true}
+    gender : {type : String, required : true},
+
+    pastQuiz : [String],
+
+    futureQuiz : [String]
     
 })
 
