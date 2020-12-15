@@ -2,7 +2,7 @@ const router = require('express')();
 const Users = require('../models/user');
 
 //URL : /api/user/reqisterForQuiz   
-router.post('/reqisterForQuiz/:userId', async (req, res)=>{
+router.post('/registerForQuiz/:userId', async (req, res)=>{
     const userId = req.params.userId;
     
     if(!userId){
@@ -80,9 +80,13 @@ router.get('/upcomingQuiz/:userId', async(req, res)=>{
     if(!userId){
         return res.json({success : false, message : "Provide user Id"});
     }
-    const user = await Users.findById(userId);
-    console.log(user)
-    return res.json({success : true, data : user.futureQuiz})
+    try{
+        const user = await Users.findById(userId).populate('futureQuiz');
+        return res.json({success : true, data : user.futureQuiz})
+    }catch(e){
+        return res.json({success : false, message : "Something went wrong", err : e})
+    }
+    
 })
 
 module.exports = router
