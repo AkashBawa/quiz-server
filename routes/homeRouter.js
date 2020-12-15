@@ -108,7 +108,7 @@ try {
 
     user = new Users({
       ...req.body,
-      userId : userid
+      quizAppId : userid
     })
 
     let hash = await  Users.createHash(user)
