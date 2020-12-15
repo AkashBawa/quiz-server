@@ -9,8 +9,8 @@ const { strict } = require('assert');
 
 const user = new mongoose.Schema({
 
-    userId : {
-        type : String,
+    quizAppId : {
+        type : String,                       // custom
         required : true
     },
     
@@ -60,9 +60,15 @@ const user = new mongoose.Schema({
 
     gender : {type : String, required : true},
 
-    pastQuiz : [String],
+    pastQuiz : [{
+        type : mongoose.SchemaTypes.ObjectId,
+        ref : 'quizlist'
+    }],
 
-    futureQuiz : [String]
+    futureQuiz : [{
+        type : mongoose.SchemaTypes.ObjectId,
+        ref : 'quizlist'
+    }]
     
 })
 

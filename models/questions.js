@@ -4,20 +4,12 @@ const mongoose = require('mongoose');
 const quiz = new mongoose.Schema(
     {
         createdBy : {
-            type : String
-        },
-        teacherId : {
-            type : Number,                  //used for URL : /test/teacherId/testId
-            required : true
-        },
-        testId : {
-            type :  Number,
-            required : true
+            type : mongoose.SchemaTypes.ObjectId
         },
         createdByName : {
             type : String
         },
-        quizId :{type : String, required : true},
+        quizId :{type : String, required : true},           // custom id
 
         name :{
             type : String,

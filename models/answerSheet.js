@@ -4,12 +4,14 @@ const ans = mongoose.Schema({
 
     quizId : {
         type : mongoose.SchemaTypes.ObjectId,
-        required : true
+        required : true,
+        ref : 'quizlist'
     },
 
     userId : {
         type : mongoose.SchemaTypes.ObjectId,
-        required : true
+        required : true,
+        ref : 'user'
     },
 
     questionAttempted : {type : Number},
