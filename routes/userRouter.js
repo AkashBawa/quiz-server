@@ -1,6 +1,7 @@
 const router = require('express')();
 const Users = require('../models/user');
-
+const QuizList = require('../models/questions')
+const Result = require('../models/answerSheet');
 //URL : /api/user/reqisterForQuiz   
 router.post('/registerForQuiz/:userId', async (req, res)=>{
     const userId = req.params.userId;
@@ -74,6 +75,19 @@ router.post('/updateProfile/:userId',async (req, res)=>{
 
 });
 
+//URL : /api/user/userDetailById/:userId
+router.get('/userDetailById/:userId', async(req, res)=>{
+    const userId = req.params.userId;
+    if(!userId){
+        return res.json({success : false, message : "provide userId"})
+    }
+    try{
+        const user = await Users.findById(userId);
+        return res.json({success : true, data : user})
+    } catch(e){
+        return res.json({success : false, message : "something went wrong", err: e})
+    }
+})
 //URL : /api/user/upcomingQuiz/:userId
 router.get('/upcomingQuiz/:userId', async(req, res)=>{
     const userId = req.params.userId;
@@ -86,6 +100,58 @@ router.get('/upcomingQuiz/:userId', async(req, res)=>{
     }catch(e){
         return res.json({success : false, message : "Something went wrong", err : e})
     }
+    
+})
+
+router.post('/savequiz/:userid', async(req, res)=>{
+    let userid = req.params.userid;
+    console.log(req.body)
+    if(!userid){
+        return res.json({success : false, message : "Provide user id"});
+    }
+    if(!req.body.quizId){
+        return res.json({success : false, message : "Provide quizId"});
+    }
+    if(!req.body.questionAttempted){
+        return res.json({success : false, message : "Provide questionAttempted"});
+    }
+    if(!req.body.markedAns){
+        return res.json({success : false, message : "Provide markedAns"});
+    }
+
+    try {
+
+        const user = await Users.findById(userid)
+        if(!user){
+            return res.json({success : false, message : "No such user found"})
+        }
+
+        const currentQuiz = await QuizList.findById(req.body.quizId);
+        if(!currentQuiz){
+            return res.json({success : false, message : "No such quiz found"})
+        }
+        console.log(currentQuiz)
+        var marks = 0;
+
+        for(let i = 0; i < currentQuiz.questionArray.length; i++){
+            if(req.body.markedAns[i] == currentQuiz.questionArray[i].correctIndex){
+                marks++;
+            }
+        }
+        console.log(marks)
+        const result = new Result({
+            ...req.body,
+            markesObtained : marks,
+            userId : userid
+        });
+        
+        await result.save();
+        return res.json({success : true, message : "Result saved"})
+
+    } catch(e){
+        return res.json({success : false, message : "Something went wrong", err : e})
+    }
+    
     
 })
 

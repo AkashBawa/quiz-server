@@ -50,7 +50,7 @@ router.post('/login', async (req, res)=>{
                message : 'Please verify your email by the link sent on your email and login again.'})
       } 
 
-      const userToken = await tokenController.generateToken(user.toJSON())
+      const userToken = await tokenController.generateToken({"_id" :user._id})
 
       if(userToken == false){
         return res.json({success : false, message : "something went wrong"})
