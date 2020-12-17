@@ -102,10 +102,9 @@ router.get('/upcomingQuiz/:userId', async(req, res)=>{
     }
     
 })
-
+//URL : /api/user/savequiz/:userId
 router.post('/savequiz/:userid', async(req, res)=>{
     let userid = req.params.userid;
-    console.log(req.body)
     if(!userid){
         return res.json({success : false, message : "Provide user id"});
     }
@@ -120,17 +119,26 @@ router.post('/savequiz/:userid', async(req, res)=>{
     }
 
     try {
+        const quizId = req.body.quizId;
+        var user = await Users.findById(userid)
 
-        const user = await Users.findById(userid)
         if(!user){
             return res.json({success : false, message : "No such user found"})
         }
 
+        if(user.pastQuiz.includes(quizId)){
+            return res.json({success : false, message : "Response already saved"});
+        }
+        
+        if(!user.futureQuiz.includes(quizId)){
+            return res.json({success : false, message : "You are not registered"})
+        }
+
         const currentQuiz = await QuizList.findById(req.body.quizId);
+
         if(!currentQuiz){
             return res.json({success : false, message : "No such quiz found"})
         }
-        console.log(currentQuiz)
         var marks = 0;
 
         for(let i = 0; i < currentQuiz.questionArray.length; i++){
@@ -138,20 +146,62 @@ router.post('/savequiz/:userid', async(req, res)=>{
                 marks++;
             }
         }
-        console.log(marks)
+
         const result = new Result({
             ...req.body,
             markesObtained : marks,
             userId : userid
         });
+
         
         await result.save();
+        
+        let ind = user.futureQuiz.indexOf(quizId);
+        user.futureQuiz.splice(ind , 1);
+        user.pastQuiz.push(quizId);
+        await user.save();
+        
         return res.json({success : true, message : "Result saved"})
+        
 
     } catch(e){
         return res.json({success : false, message : "Something went wrong", err : e})
     }
+})
+//URL : /api/user/pastQuizDetails/:userId
+router.get('/pastQuizDetails/:userId', async(req, res)=>{
     
+    const userId = req.params.userId;
+    if(!userId){
+        return res.json({success : false, message : "Provide userId"})
+    }
+    try {
+        const user = await Users.findById(userId).populate('pastQuiz');
+        return res.json({success : true, pastQuiz : user.pastQuiz})
+    }catch(e){
+        return res.json({success : false, message : "Something went wrong", err : e})
+    }
+    
+})
+//URL : /api/user/singleTestAnswerSheet/:userId/:quizId
+router.get('/singleTestAnswerSheet/:userId/:quizId',async(req, res)=>{
+    const userId = req.params.userId;
+    const quizId = req.params.quizId;
+    if(!userId){
+        return res.json({success : false, message : "Provide userId"})
+    }
+    if(!quizId){
+        return res.json({success : false, message : "Provide quizId"})
+    }
+    try {  
+        const quiz = await QuizList.findById(quizId);
+        const answerSheet = await Result.findOne({"quizId" : quizId , "userId": userId})
+        console.log(answerSheet);
+        return res.json({success : true, data : {quiz , answerSheet}})
+
+    }catch(e){
+        return res.json({success : false , message : "Something went wrong"})
+    }
     
 })
 
