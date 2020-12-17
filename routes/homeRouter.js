@@ -56,7 +56,7 @@ router.post('/login', async (req, res)=>{
         return res.json({success : false, message : "something went wrong"})
       }
 
-      return res.status(200).json({success : true,emailConfirm : true, userToken})      
+      return res.status(200).json({success : true,emailConfirm : true, userToken, role : user.role})      
     
     } else {
       res.status(200).json({success : false, message: "Password not match"});
@@ -93,14 +93,14 @@ try {
 
     if(user.length != 0){
       console.log("fetch user is : ", user)
-      res.json({success : false, msg : "Email already exists"})
+      res.json({success : false, message : "Email already exists"})
       return;
     }
 
     user = await Users.find({'mobileNo' : req.body.mobileNo});
 
     if(user.length != 0){
-      res.json({success : false, msg : "Mobile number already exists"})
+      res.json({success : false, message : "Mobile number already exists"})
       return;
     }
 
@@ -115,7 +115,7 @@ try {
 
     if(hash == null ){
       console.log("reached at 1");
-      res.json({success : false, message : "1"})
+      res.json({success : false, message : "error"})
       return;
     }
 
