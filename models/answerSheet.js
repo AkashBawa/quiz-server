@@ -18,7 +18,10 @@ const ans = mongoose.Schema({
 
     markedAns : [Number],
 
-    markesObtained : {type : Number}
+    markesObtained : {type : Number},
+
+    totalQuestions : {type : Number},
+    
 })
 
 module.exports = mongoose.model('answerSheet', ans)
