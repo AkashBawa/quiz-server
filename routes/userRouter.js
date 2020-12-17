@@ -187,6 +187,7 @@ router.get('/pastQuizDetails/:userId', async(req, res)=>{
 router.get('/singleTestAnswerSheet/:userId/:quizId',async(req, res)=>{
     const userId = req.params.userId;
     const quizId = req.params.quizId;
+    
     if(!userId){
         return res.json({success : false, message : "Provide userId"})
     }
