@@ -137,11 +137,26 @@ router.get('/quizbySingledate/:date', async (req, res)=>{
     try {
         var today = new Date();
     
-        let quiz = await Quiz.find(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           );
+        let quiz = await Quiz.find(                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      );
         return res.json({success : true, data : quiz})
 
     } catch(e){
         return res.json({success : false, message : e, msg : e})
+    }
+})
+
+
+router.get('/deleteQuizByID/:quizId',async (req,res) => {
+    var quizId = req.params.quizId;
+    if(!quizId){
+        return res.json({success : false, message : "quizId not found"});
+    }
+    try{
+        let deleteMe = await Quiz.remove({"_id" : quizId});
+        return res.json({success : true, message : deleteMe});
+    }
+    catch(e){
+        return res.json({success : false, message : e})
     }
 })
 
