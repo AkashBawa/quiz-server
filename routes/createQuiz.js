@@ -121,7 +121,7 @@ router.get('/quizbydate', async (req, res)=>{
     try {
         var today = new Date();
         
-        let quiz = await Quiz.find({"date" : {$gte : today}});
+        let quiz = await Quiz.find({"date" : {$gte : today}}).sort({"createdAt" : -1});
         return res.json({success : true, data : quiz});
 
     } catch(e){
